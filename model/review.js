@@ -1,3 +1,5 @@
+const mongoose =require("mongoose");
+const Schema =mongoose.Schema;
 require('mongoose-type-url');
 
 const reviewSchema = new Schema({

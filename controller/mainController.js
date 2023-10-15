@@ -1,7 +1,7 @@
-import Main from '../model/main';
+const Main= require('../model/main');
 
 
-export async function Main(req,res){
+const Maincon  = async  (req,res)=>{
     
         try {
             const allData = await Main.find({});
@@ -12,3 +12,7 @@ export async function Main(req,res){
           }
     
 }
+
+
+
+module.exports=Maincon;

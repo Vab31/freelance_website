@@ -1,10 +1,13 @@
 
-
-
-//signupform
 const bcrypt = require('bcryptjs');
-const User= require('../model/auth')
-export async function Signup(req,res) { 
+const User= require('../model/auth');
+const jwt =require('jsonwebtoken')
+
+
+
+const  Signup = async (req, res) =>{ 
+
+  console.log("inside signup");
 
 try{
     const {paid,role,name,phoneNumber,email,password,country,state,city}=req.body;
@@ -47,36 +50,79 @@ try{
 
  }
 
+ 
 
-
- export default async function Login(req,res){
-   const {logincred,password}=req.body;
-   try{
-const mail = await User.findone({email:logincred});
-const phonenum = await User.findone({phoneNumber:logincred})
-
-if(!mail && !phonenum ){
-  return res.status(401).json({error:'Invalid email or password'});
-}
-
-
-const passwd= await bcrypt.compare(password,mail.password);
-
-if (!passwd) {
-  return res.status(401).json({ error: 'Invalid email or password' });
-}
-
+ 
+ 
+//   async function Login(req, res) {
+//  const { email, password } = req.body;
   
+//     try {
+//       const user = await User.findOne({ email });
+//       if (!user) {
+//         return res.status(401).json({ error: 'Invalid email or password' });
+//       }
+  
+//       const passwordMatch = await bcrypt.compare(password, user.password);
+//       if (!passwordMatch) {
+//         return res.status(401).json({ error: 'Invalid email or password' });
+//       }
+  
+//       const token = jwt.sign({ userId: user._id }, 'mysecretkey');
+//       return res.json({ token });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//  }
 
+async function Login(req, res) {
+  // const { logincred, password } = req.body;
+  // console.log(req.body.email)
+  if(req.body.email){
 
+    const { email, password } = req.body;
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+  
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+  
+      const token = jwt.sign({ userId: user._id }, 'mysecretkey');
+      return res.json({ token });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }else{
+    const { phoneNumber, password } = req.body;
+  
+    try {
+      const user = await User.findOne({ phoneNumber });
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+  
+      const passwordMatch = await bcrypt.compare(password, user.password);
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Invalid email or password' });
+      }
+  
+      const token = jwt.sign({ userId: user._id }, 'mysecretkey');
+      return res.json({ token });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+  
+}
+ 
 
-
-
-const token =jwt.sgin({userId:user._id},'mysecretkey');
-return token;
-   }catch(error){
-    console.error(error);
-    res.status(500).json({error:'Internal server error'})
-   }
-
- }
+ module.exports = { Signup ,Login};
